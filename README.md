@@ -18,8 +18,12 @@ Let's build an ERC20 token that gives etherless accounts the ability to transfer
 
 ```shell
 ./run.sh
+```
 
-# in container
+After complete running container, add a account (public key) in file geth.log to file tests/deploy.js. Then run:
+
+```shell
+# in container Clevis:/dapp
 # compile contract
 clevis compile MetaCoin
 clevis test deploy
