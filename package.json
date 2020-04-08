@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@openzeppelin/contracts": "^2.5.0",
     "axios": "^0.18.0",
-    "clevis": "0.0.105",
+    "clevis": "^0.2.39",
     "cors": "^2.8.5",
     "dapparatus": "^1.0.44",
     "express": "^4.16.4",

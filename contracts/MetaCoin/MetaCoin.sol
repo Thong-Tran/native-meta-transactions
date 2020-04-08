@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.0;
 
 import "openzeppelin-solidity/contracts/token/ERC20/ERC20Mintable.sol";
 
@@ -14,7 +14,7 @@ contract MetaCoin is ERC20Mintable {
 
   mapping (address => uint256) public replayNonce;
 
-  function metaTransfer(bytes signature, address to, uint256 value, uint256 nonce, uint256 reward) public returns (bool) {
+  function metaTransfer(bytes memory signature, address to, uint256 value, uint256 nonce, uint256 reward) public returns (bool) {
     bytes32 metaHash = metaTransferHash(to,value,nonce,reward);
     address signer = getSigner(metaHash,signature);
     //make sure signer doesn't come back as 0x0
@@ -49,7 +49,7 @@ contract MetaCoin is ERC20Mintable {
   }
   */
 
-  function getSigner(bytes32 _hash, bytes _signature) internal pure returns (address){
+  function getSigner(bytes32 _hash, bytes memory _signature) internal pure returns (address){
     bytes32 r;
     bytes32 s;
     uint8 v;
