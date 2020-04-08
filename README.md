@@ -22,7 +22,10 @@ Let's build an ERC20 token that gives etherless accounts the ability to transfer
 # in container
 # compile contract
 clevis compile MetaCoin
+clevis test deploy
 clevis test publish
 
-node ./relayer.js 
+node ./relayer.js
 ```
+
+Open http://localhost:3000/?privateKey={key} with private key in file geth.log
