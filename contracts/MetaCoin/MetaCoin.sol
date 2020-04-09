@@ -1,6 +1,6 @@
 pragma solidity ^0.5.0;
 
-import "openzeppelin-solidity/contracts/token/ERC20/ERC20Mintable.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20Mintable.sol";
 
 contract MetaCoin is ERC20Mintable {
 
@@ -12,22 +12,26 @@ contract MetaCoin is ERC20Mintable {
 
   }
 
+  event Transaction(address indexed from, address indexed to, uint256 value, string senderNote, string receiverNote);
+
   mapping (address => uint256) public replayNonce;
 
-  function metaTransfer(bytes memory signature, address to, uint256 value, uint256 nonce, uint256 reward) public returns (bool) {
-    bytes32 metaHash = metaTransferHash(to,value,nonce,reward);
+  function metaTransfer(bytes memory signature, address to, uint256 value, uint256 nonce, uint256 reward, string memory senderNote, string memory receiverNote) public returns (bool) {
+    bytes32 metaHash = metaTransferHash(to,value,nonce,reward, senderNote, receiverNote);
     address signer = getSigner(metaHash,signature);
     //make sure signer doesn't come back as 0x0
     require(signer!=address(0));
     require(nonce == replayNonce[signer]);
     replayNonce[signer]++;
     _transfer(signer, to, value);
+    emit Transaction(signer, to, value, senderNote, receiverNote);
+
     if(reward>0){
       _transfer(signer, msg.sender, reward);
     }
   }
-  function metaTransferHash(address to, uint256 value, uint256 nonce, uint256 reward) public view returns(bytes32){
-    return keccak256(abi.encodePacked(address(this),"metaTransfer", to, value, nonce, reward));
+  function metaTransferHash(address to, uint256 value, uint256 nonce, uint256 reward, string memory senderNote, string memory receiverNote) public view returns(bytes32){
+    return keccak256(abi.encodePacked(address(this),"metaTransfer", to, value, nonce, reward, senderNote, receiverNote));
   }
 
   /*

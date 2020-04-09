@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import { Dapparatus, Gas, ContractLoader, Transactions, Events, Scaler, Blockie, Address, Button } from "dapparatus"
 import Web3 from 'web3';
+import EthCrypto from 'eth-crypto';
 
 import axios from 'axios';
 let FALLBACK_WEB3_PROVIDER = "http://0.0.0.0:8545"
@@ -33,6 +34,7 @@ class App extends Component {
   }
   render() {
     let {web3,account,contracts,tx,gwei,block,avgBlockTime,etherscan} = this.state
+
     let connectedDisplay = []
     let contractsDisplay = []
     if(web3){
@@ -86,7 +88,6 @@ class App extends Component {
       )
 
       if(contracts){
-
         let minterView = ""
         if(this.state.isMinter){
           minterView = (
@@ -135,12 +136,25 @@ class App extends Component {
                 //get the nonce from the contract
                 const nonce = await contracts.MetaCoin.replayNonce(this.state.account).call()
                 console.log("nonce:",nonce)
+
+                const pubLey = EthCrypto.publicKeyByPrivateKey(this.state.metaAccount.privateKey)
+                // EthCrypto.encryptWithPublicKey(pubLey, 'test').then((v) => {
+                //   console.log(v)
+                //   EthCrypto.decryptWithPrivateKey(this.state.metaAccount.privateKey, v).then((v) => {
+                //     console.log(v)
+                //   })
+                // })
+
                 //address to, uint256 value, uint256 nonce, uint256 reward
+
+                console.log(EthCrypto.cipher.stringify(await EthCrypto.encryptWithPublicKey(pubLey, 'test')))
                 const args = [
-                  this.state.transferTo,
+                  EthCrypto.publicKey.toAddress(EthCrypto.publicKeyByPrivateKey(this.state.transferTo)),
                   web3.utils.toTwosComplement(this.state.transferAmount),
                   web3.utils.toTwosComplement(nonce),
-                  web3.utils.toTwosComplement(reward)
+                  web3.utils.toTwosComplement(reward),
+                  EthCrypto.cipher.stringify(await EthCrypto.encryptWithPublicKey(pubLey, 'test')),
+                  EthCrypto.cipher.stringify(await EthCrypto.encryptWithPublicKey(EthCrypto.publicKeyByPrivateKey(this.state.transferTo), 'test')),
                 ]
                 console.log("args:",args)
                 //get the hash of the arguments from the contract
@@ -149,7 +163,7 @@ class App extends Component {
                 let sig
                 //sign the hash using either the meta account OR the etherless account
                 if(this.state.metaAccount.privateKey){
-                  console.log(this.state.metaAccount.privateKey)
+                  // console.log(this.state.metaAccount.privateKey)
                   sig = web3.eth.accounts.sign(message, this.state.metaAccount.privateKey);
                   sig = sig.signature
                 }else{
@@ -214,6 +228,19 @@ class App extends Component {
               block={block}
               onUpdate={(eventData,allEvents)=>{
                 console.log("EVENT DATA:",eventData)
+                this.setState({events:allEvents})
+              }}
+            />
+            <Events
+              config={{hide:false}}
+              contract={contracts.MetaCoin}
+              eventName={"Transaction"}
+              block={block}
+              onUpdate={(eventData,allEvents)=>{
+                console.log("EVENT DATA:",eventData)
+                EthCrypto.decryptWithPrivateKey(this.state.metaAccount.privateKey, eventData.senderNote).then((v) => {
+                  console.log('note: ', v)
+                })
                 this.setState({events:allEvents})
               }}
             />

@@ -1,11 +1,20 @@
 const fs = require('fs');
-module.exports = {
-  'openzeppelin-solidity/contracts/GSN/Context.sol': {content: fs.readFileSync('node_modules/@openzeppelin/contracts/GSN/Context.sol', 'utf8')},
-  'openzeppelin-solidity/contracts/token/ERC20/ERC20Mintable.sol': {content: fs.readFileSync('node_modules/@openzeppelin/contracts/token/ERC20/ERC20Mintable.sol', 'utf8')},
-  'openzeppelin-solidity/contracts/math/SafeMath.sol': {content: fs.readFileSync('node_modules/@openzeppelin/contracts/math/SafeMath.sol', 'utf8')},
-  'openzeppelin-solidity/contracts/token/ERC20/ERC20.sol': {content: fs.readFileSync('node_modules/@openzeppelin/contracts/token/ERC20/ERC20.sol', 'utf8')},
-  'openzeppelin-solidity/contracts/token/ERC20/IERC20.sol': {content: fs.readFileSync('node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol', 'utf8')},
-  'openzeppelin-solidity/contracts/access/roles/MinterRole.sol': {content: fs.readFileSync('node_modules/@openzeppelin/contracts/access/roles/MinterRole.sol', 'utf8')},
-  'openzeppelin-solidity/contracts/access/Roles.sol': {content: fs.readFileSync('node_modules/@openzeppelin/contracts/access/Roles.sol', 'utf8')},
-  'openzeppelin-solidity/contracts/ownership/Ownable.sol': {content: fs.readFileSync('node_modules/@openzeppelin/contracts/ownership/Ownable.sol', 'utf8')},
-}
+
+const depends = [
+  '@openzeppelin/contracts/GSN/Context.sol',
+  '@openzeppelin/contracts/token/ERC20/ERC20Mintable.sol',
+  '@openzeppelin/contracts/math/SafeMath.sol',
+  '@openzeppelin/contracts/token/ERC20/ERC20.sol',
+  '@openzeppelin/contracts/token/ERC20/IERC20.sol',
+  '@openzeppelin/contracts/access/roles/MinterRole.sol',
+  '@openzeppelin/contracts/access/Roles.sol',
+  '@openzeppelin/contracts/ownership/Ownable.sol',
+]
+
+let dependContents = {}
+
+depends.forEach(element => {
+  dependContents[element] = { content: fs.readFileSync(`node_modules/${element}`, 'utf8') }
+});
+
+module.exports = dependContents
